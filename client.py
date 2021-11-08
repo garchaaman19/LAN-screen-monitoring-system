@@ -4,7 +4,7 @@ import cv2
 import numpy
 from PIL import Image
 
-# 截图大小
+
 WIDTH = int(1366 / 1)
 HEIGHT = int(768 / 1)
 
@@ -19,7 +19,7 @@ def recvall(conn, length):
     return buf
 
 
-# host为server的ip
+
 def main(host='127.0.0.1', port=5000):
     watching = True
 
@@ -29,12 +29,11 @@ def main(host='127.0.0.1', port=5000):
         while watching:
             size_len = int.from_bytes(sock.recv(1), byteorder='big')
             size = int.from_bytes(sock.recv(size_len), byteorder='big')
-            # 解压缩
+           
             bgra = decompress(recvall(sock, size))
             img = Image.frombytes("RGB", (WIDTH, HEIGHT), bgra, "raw", "BGRX")
             np_ar = numpy.array(img, dtype=numpy.uint8)
-            # 因为OpenCV模式色彩默认是BGR（红色和蓝色互换了）
-            # 这里就是把BGR改成RGB
+            
             np_ar = numpy.flip(np_ar[:, :, :3], 2)
             cv2.imshow("OpenCV show", np_ar)
 
